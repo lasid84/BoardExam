@@ -1,5 +1,6 @@
 package com.example.boardexam2;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -79,6 +80,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if (currentUser != null)
         {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
             Toast.makeText(LoginActivity.this, "자동로그인" + currentUser.getUid(), Toast.LENGTH_SHORT).show();
         }
         //updateUI(currentUser);
@@ -118,10 +121,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
+//                            Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(LoginActivity.this, "로그인성공" + user.getUid(), Toast.LENGTH_SHORT).show();
-                            //updateUI(user);
+//                            Toast.makeText(LoginActivity.this, "로그인성공" + user.getUid(), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
