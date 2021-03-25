@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "999430389528",
+    "firebase_url": "https://sentilab-38250.firebaseio.com",
+    "project_id": "sentilab-38250",
+    "storage_bucket": "sentilab-38250.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999430389528:android:dfef15c8acb554c964686d",
+        "android_client_info": {
+          "package_name": "com.example.boardexam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "999430389528-0o0vsr2vev7vq1ce4c77plsnrm7sr5vr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRKuRGlE5wCVPFNc3C-aW4yzC61uWvOQ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "999430389528-0o0vsr2vev7vq1ce4c77plsnrm7sr5vr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999430389528:android:9427e5754b15ff9064686d",
+        "android_client_info": {
+          "package_name": "com.example.newactivity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "999430389528-0o0vsr2vev7vq1ce4c77plsnrm7sr5vr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRKuRGlE5wCVPFNc3C-aW4yzC61uWvOQ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "999430389528-0o0vsr2vev7vq1ce4c77plsnrm7sr5vr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
