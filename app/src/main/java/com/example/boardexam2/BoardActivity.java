@@ -8,18 +8,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.boardexam2.models.Board;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -34,35 +39,65 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mMainRecyclerView = findViewById(R.id.main_recycler_view);
         findViewById(R.id.main_write_button).setOnClickListener(this);
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
         mBoardList = new ArrayList<>();
+        mStore.collection("board")
+                .orderBy(FirebaseID.timestamp, Query.Direction.ASCENDING)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        if (queryDocumentSnapshots != null) {
+                            mBoardList.clear();
+                            //for(DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                            for (DocumentSnapshot snap : queryDocumentSnapshots.getDocuments()) {
+                                Map<String, Object> shot = snap.getData();
+                                String documentid = String.valueOf(shot.get(FirebaseID.documentId));
+                                String title = String.valueOf(shot.get(FirebaseID.title));
+                                String contents = String.valueOf(shot.get(FirebaseID.contents));
+                                String name = String.valueOf(shot.get(FirebaseID.name));
+                                Board data = new Board(documentid, title, contents, name);
 
-        mStore.collection("board").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                for(DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                    String id = (String)dc.getDocument().getData().get("id");
-                    String title = (String)dc.getDocument().getData().get("title");
-                    String contents = (String)dc.getDocument().getData().get("contents");
-                    String name = (String)dc.getDocument().getData().get("name");
-                    Board data = new Board(id, title, contents, name);
+                                mBoardList.add(data);
+                            }
+                        }
+                        mAdapter = new MainAdapter(mBoardList);
+                        mMainRecyclerView.setAdapter(mAdapter);
 
-                    mBoardList.add(data);
-                }
-
-                mAdapter = new MainAdapter(mBoardList);
-                mMainRecyclerView.setAdapter(mAdapter);
-
-            }
-        });
+                    }
+                });
     }
 
     @Override
     public void onClick(View v) {
         startActivity(new Intent(this, WriteActivity.class));
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:{ //toolbar의 back키 눌렀을 때 동작
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+
+
 
     private class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
 

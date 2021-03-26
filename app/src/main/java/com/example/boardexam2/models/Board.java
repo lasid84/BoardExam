@@ -1,4 +1,8 @@
-package com.example.boardexam2;
+package com.example.boardexam2.models;
+
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
 
 public class Board {
 
@@ -6,8 +10,18 @@ public class Board {
     private String title;
     private String contents;
     private String name;
+    @ServerTimestamp
+    private Date date;
 
     public Board() {
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Board(String id, String title, String contents, String name) {
@@ -56,6 +70,7 @@ public class Board {
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 ", name='" + name + '\'' +
+                ", date=" + date +
                 '}';
     }
 }

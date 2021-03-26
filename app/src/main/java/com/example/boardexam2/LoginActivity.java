@@ -80,11 +80,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if (currentUser != null)
         {
+            FirebaseID.nickname = currentUser.getDisplayName();
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
-            Toast.makeText(LoginActivity.this, "자동로그인" + currentUser.getUid(), Toast.LENGTH_SHORT).show();
         }
-        //updateUI(currentUser);
     }
 
     private void signIn() {

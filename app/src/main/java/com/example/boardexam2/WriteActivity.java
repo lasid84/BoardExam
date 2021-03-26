@@ -1,6 +1,7 @@
 package com.example.boardexam2;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -29,10 +31,14 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mWriteTitleText = findViewById(R.id.write_title_text);
         mWriteContentsText = findViewById(R.id.write_contents_text);
         mWriteNameText = findViewById(R.id.write_name_text);
+
+        mWriteNameText.setText(FirebaseID.nickname);
+        mWriteNameText.setEnabled(false);
 
         findViewById(R.id.write_upload_text).setOnClickListener(this);
 
@@ -40,12 +46,13 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        id = mStore.collection("board").document().getId();
+        id = mStore.collection(FirebaseID.board).document().getId();
         Map<String, Object> post = new HashMap<>();
-        post.put("id", id);
-        post.put("title", mWriteTitleText.getText().toString());
-        post.put("contents", mWriteContentsText.getText().toString());
-        post.put("name", mWriteNameText.getText().toString());
+        post.put(FirebaseID.documentId, id);
+        post.put(FirebaseID.title, mWriteTitleText.getText().toString());
+        post.put(FirebaseID.contents, mWriteContentsText.getText().toString());
+        post.put(FirebaseID.name, mWriteNameText.getText().toString());
+        post.put(FirebaseID.timestamp, FieldValue.serverTimestamp());
 
 //        mStore.collection("board").add(post)
 //                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -60,7 +67,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 //            }
 //        });
 
-                mStore.collection("board").document().set(post)
+                mStore.collection(FirebaseID.board).document().set(post)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
@@ -73,6 +80,17 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                                 Toast.makeText(com.example.boardexam2.WriteActivity.this, "업로드 실패!", Toast.LENGTH_SHORT).show();
                             }
                 });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:{ //toolbar의 back키 눌렀을 때 동작
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }
