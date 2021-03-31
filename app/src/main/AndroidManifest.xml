@@ -12,7 +12,9 @@
         <activity android:name=".BoardActivity"
             android:label="@string/board"
         />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:label="@string/app_name"
+            />
         <activity android:name=".WriteActivity"
             android:label="@string/write_board"
             />

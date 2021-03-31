@@ -4,21 +4,26 @@
 
     <item
         android:id="@+id/menu_main"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_round"
         android:orderInCategory="0"
         android:title="menu"
         app:showAsAction="always"
-        android:onClick="onPopUpClick"
         >
         <menu>
-
-            <Textview
-                android:title="11111" />
+            <item
+                android:id="@+id/toolbar_item_logininfo"
+                android:title="login info"
+                android:icon="@drawable/ic_person"
+                app:showAsAction="never"
+                />
 
             <item
-                android:id="@+id/second"
-                android:title="222222" />
+                android:id="@+id/toolbar_item_logout"
+                android:title="@string/log_out"
+                android:icon="@drawable/ic_power"
+                />
         </menu>
+
     </item>
 
 </menu>

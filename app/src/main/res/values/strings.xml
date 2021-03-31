@@ -1,6 +1,12 @@
 <resources>
-    <string name="app_name">BoardExam2</string>
+    <string name="app_name">Inpu App name</string>
     <string name="board">Notice Board</string>
     <string name="write_board">Write Board</string>
     <string name="log_out">Log Out</string>
+    <string name="replyDelete">Delete</string>
+    <string name="writeupdate">Register</string>
+    <string name="writeupload">Update</string>
+    <string name="writedelete">Delete</string>
+    <string name="hint_contents">Contents</string>
+    <string name="hint_title">Title</string>
 </resources>

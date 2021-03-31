@@ -6,23 +6,68 @@
     android:layout_height="match_parent"
     tools:context=".WriteActivity"
     android:orientation="vertical"
+    android:background="@color/white"
     >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/write_write_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/writeupload"
+            android:layout_margin="4dp"
+            />
+
+        <Button
+            android:id="@+id/write_update_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/writeupdate"
+            android:layout_margin="4dp"
+            />
+
+        <Button
+            android:id="@+id/write_delete_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/writedelete"
+            android:layout_margin="4dp"
+            />
+
+    </LinearLayout>
 
     <EditText
         android:id="@+id/write_title_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="title"
+        android:hint="@string/hint_title"
         android:textSize="24sp"
-        android:textColor="@android:color/black"
+        />
+
+    <Spinner
+        android:id="@+id/write_type"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:spinnerMode="dropdown"
+        android:layout_margin="4dp"
+
         />
 
     <EditText
         android:id="@+id/write_contents_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Contents"
+        android:layout_height="300dp"
+        android:hint= "@string/hint_contents"
         android:textSize="18sp"
+        android:gravity="top"
         />
 
     <EditText
@@ -31,13 +76,6 @@
         android:layout_height="wrap_content"
         android:hint="Name"
         android:textSize="14sp"
-        />
-
-    <Button
-        android:id="@+id/write_upload_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="업로드"
         />
 
 </LinearLayout>

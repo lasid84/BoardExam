@@ -1,20 +1,18 @@
 package com.example.boardexam2;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.boardexam2.models.Board;
-import com.google.firebase.firestore.DocumentChange;
+import com.example.boardexam2.adapters.BoardAdapter;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,15 +21,16 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
+public class BoardActivity extends AppCompatActivity implements View.OnClickListener, BoardAdapter.OnListItemLongSelectedInterface, BoardAdapter.OnListItemSelectedInterface {
 
     private FirebaseFirestore mStore = FirebaseFirestore.getInstance();
 
     private RecyclerView mMainRecyclerView;
-    private MainAdapter mAdapter;
+    private BoardAdapter mAdapter;
     private List<Board> mBoardList;
 
     @Override
@@ -45,6 +44,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.main_write_button).setOnClickListener(this);
 
 
+
     }
 
     @Override
@@ -52,8 +52,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         super.onStart();
 
         mBoardList = new ArrayList<>();
-        mStore.collection("board")
-                .orderBy(FirebaseID.timestamp, Query.Direction.ASCENDING)
+        mStore.collection(FirebaseID.board)
+                .orderBy(FirebaseID.createdate, Query.Direction.DESCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -64,14 +64,30 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                                 Map<String, Object> shot = snap.getData();
                                 String documentid = String.valueOf(shot.get(FirebaseID.documentId));
                                 String title = String.valueOf(shot.get(FirebaseID.title));
+                                String type = String.valueOf(shot.get(FirebaseID.type));
                                 String contents = String.valueOf(shot.get(FirebaseID.contents));
                                 String name = String.valueOf(shot.get(FirebaseID.name));
-                                Board data = new Board(documentid, title, contents, name);
+                                String email = String.valueOf(shot.get(FirebaseID.email));
+//                                Date createdate = ((Timestamp)shot.get(FirebaseID.createdate)).toDate();
+//                                Date updatedate = ((Timestamp)shot.get(FirebaseID.updatedate)).toDate();
+                                Timestamp createtime = (Timestamp)shot.get(FirebaseID.createdate);
+                                Timestamp updatetime = (Timestamp)shot.get(FirebaseID.updatedate);
+                                Date createdate, updatedate = null;
+                                if (createtime == null) {
+                                    Timestamp ts = new Timestamp(new Date());
+                                    createdate = ts.toDate();
+                                } else {
+                                    createdate = createtime.toDate();
+                                    if (updatetime != null) {
+                                        updatedate = updatetime.toDate();
+                                    }
+                                }
+                                Board data = new Board(documentid, title, type, contents, name, email, createdate, updatedate, FirebaseID.admin);
 
                                 mBoardList.add(data);
                             }
                         }
-                        mAdapter = new MainAdapter(mBoardList);
+                        mAdapter = new BoardAdapter(mBoardList,BoardActivity.this , BoardActivity.this);
                         mMainRecyclerView.setAdapter(mAdapter);
 
                     }
@@ -80,7 +96,13 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        startActivity(new Intent(this, WriteActivity.class));
+        switch (v.getId()) {
+            case R.id.main_write_button :
+                startActivity(new Intent(this, WriteActivity.class));
+                break;
+            case R.id.item_btn_delete:
+                break;
+        }
     }
 
     @Override
@@ -95,51 +117,31 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-
-
-
-
-    private class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
-
-        private List<Board> mBoardList;
-
-        public MainAdapter(List<Board> mBoardList) {
-            this.mBoardList = mBoardList;
-        }
-
-        @NonNull
-        @Override
-        public MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new MainViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
-            Board data = mBoardList.get(position);
-            holder.mTitleTextView.setText(data.getTitle());
-            holder.mNameTextView.setText(data.getName());
-        }
-
-        @Override
-        public int getItemCount() {
-            if (mBoardList != null)
-                return mBoardList.size();
-            else
-                return 0;
-        }
-
-        class MainViewHolder extends RecyclerView.ViewHolder {
-
-            private TextView mTitleTextView;
-            private TextView mNameTextView;
-
-            public MainViewHolder(@NonNull View itemView) {
-                super(itemView);
-
-                mTitleTextView = itemView.findViewById(R.id.item_title_text);
-                mNameTextView = itemView.findViewById(R.id.item_name_text);
-            }
-        }
+    @Override
+    public void onItemLongSelected(View v, int position) {
+        Toast.makeText(this, position + " long clicked", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onItemSelected(View v, int position) {
+        //BoardAdapter.BoardViewHolder viewHolder = (BoardAdapter.BoardViewHolder)mMainRecyclerView.findViewHolderForAdapterPosition(position);
+        Board data = mBoardList.get(position);
+
+        Intent intent = new Intent(this, WriteActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseID.documentId, data.getId());
+        bundle.putString(FirebaseID.title, data.getTitle());
+        bundle.putString(FirebaseID.type, data.getType());
+        bundle.putString(FirebaseID.contents, data.getContents());
+        bundle.putString(FirebaseID.name, data.getName());
+        bundle.putString(FirebaseID.email, data.getEmail());
+;        bundle.putString(FirebaseID.createdate, data.getCreatedate().toString());
+        if (data.getUpdatedate() != null)
+            bundle.putString(FirebaseID.updatedate, data.getUpdatedate().toString());
+
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+//        Toast.makeText(this,position + "/" + data.getName() +"/" + data.getContents(), Toast.LENGTH_SHORT).show();
+    }
 }
