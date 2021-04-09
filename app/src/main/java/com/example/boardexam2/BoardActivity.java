@@ -53,6 +53,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         mBoardList = new ArrayList<>();
         mStore.collection(FirebaseID.board)
+                .whereEqualTo(FirebaseID.useflag, "Y")
                 .orderBy(FirebaseID.createdate, Query.Direction.DESCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
@@ -62,7 +63,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                             //for(DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
                             for (DocumentSnapshot snap : queryDocumentSnapshots.getDocuments()) {
                                 Map<String, Object> shot = snap.getData();
-                                String documentid = String.valueOf(shot.get(FirebaseID.documentId));
+                                String key = snap.getId();
+                                String documentid = key;
                                 String title = String.valueOf(shot.get(FirebaseID.title));
                                 String type = String.valueOf(shot.get(FirebaseID.type));
                                 String contents = String.valueOf(shot.get(FirebaseID.contents));
@@ -82,7 +84,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                                         updatedate = updatetime.toDate();
                                     }
                                 }
-                                Board data = new Board(documentid, title, type, contents, name, email, createdate, updatedate, FirebaseID.admin);
+                                Board data = new Board(key, documentid, title, type, contents, name, email, createdate, updatedate, FirebaseID.admin);
 
                                 mBoardList.add(data);
                             }
@@ -100,8 +102,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             case R.id.main_write_button :
                 startActivity(new Intent(this, WriteActivity.class));
                 break;
-            case R.id.item_btn_delete:
-                break;
+//            case R.id.item_btn_delete:
+//                break;
         }
     }
 
@@ -125,22 +127,29 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onItemSelected(View v, int position) {
         //BoardAdapter.BoardViewHolder viewHolder = (BoardAdapter.BoardViewHolder)mMainRecyclerView.findViewHolderForAdapterPosition(position);
-        Board data = mBoardList.get(position);
+        try {
+            Board data = mBoardList.get(position);
 
-        Intent intent = new Intent(this, WriteActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseID.documentId, data.getId());
-        bundle.putString(FirebaseID.title, data.getTitle());
-        bundle.putString(FirebaseID.type, data.getType());
-        bundle.putString(FirebaseID.contents, data.getContents());
-        bundle.putString(FirebaseID.name, data.getName());
-        bundle.putString(FirebaseID.email, data.getEmail());
-;        bundle.putString(FirebaseID.createdate, data.getCreatedate().toString());
-        if (data.getUpdatedate() != null)
-            bundle.putString(FirebaseID.updatedate, data.getUpdatedate().toString());
+            Intent intent = new Intent(this, WriteActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseID.documentId, data.getId());
+            bundle.putString(FirebaseID.title, data.getTitle());
+            bundle.putString(FirebaseID.type, data.getType());
+            bundle.putString(FirebaseID.contents, data.getContents());
+            bundle.putString(FirebaseID.name, data.getName());
+            bundle.putString(FirebaseID.email, data.getEmail());
+            ;
+            bundle.putString(FirebaseID.createdate, data.getCreatedate().toString());
+            if (data.getUpdatedate() != null)
+                bundle.putString(FirebaseID.updatedate, data.getUpdatedate().toString());
 
-        intent.putExtras(bundle);
-        startActivity(intent);
+            intent.putExtras(bundle);
+
+            startActivity(intent);
+        }
+        catch (Exception e) {
+            Toast.makeText(this,e.toString(), Toast.LENGTH_SHORT).show();
+        }
 
 //        Toast.makeText(this,position + "/" + data.getName() +"/" + data.getContents(), Toast.LENGTH_SHORT).show();
     }

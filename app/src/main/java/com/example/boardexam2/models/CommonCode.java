@@ -7,8 +7,8 @@ import java.util.HashMap;
 
 public class CommonCode extends com.example.boardexam2.FirebaseID {
 
-    public HashMap<Integer, String> typeMap = new HashMap<Integer, String>();
-    public String[] typeArr;
+    public static HashMap<Integer, String> typeMap = new HashMap<Integer, String>();
+    public static String[] typeArr;
 
     public CommonCode() {
     }

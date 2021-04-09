@@ -55,10 +55,10 @@
     <Spinner
         android:id="@+id/write_type"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="50dp"
         android:spinnerMode="dropdown"
         android:layout_margin="4dp"
-
+        android:dropDownVerticalOffset="16dp"
         />
 
     <EditText

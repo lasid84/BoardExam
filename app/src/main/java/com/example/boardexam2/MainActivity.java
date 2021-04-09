@@ -1,7 +1,9 @@
 package com.example.boardexam2;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mEmail = FirebaseID.useremail;
         mNickname = FirebaseID.nickname;
         Toast.makeText(this, mNickname + "님 반갑습니다.(" + mEmail + ")" , Toast.LENGTH_LONG).show();
+
     }
 
     @Override
@@ -45,9 +48,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(MainActivity.this, BoardActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.item_btn_delete:
-                break;
+//            case R.id.item_btn_delete:
+//                break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        LoginActivity.signOut();
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
     }
 
     @Override

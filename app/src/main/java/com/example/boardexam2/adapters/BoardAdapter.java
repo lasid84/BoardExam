@@ -1,8 +1,10 @@
 package com.example.boardexam2.adapters;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.boardexam2.R;
 import com.example.boardexam2.models.Board;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHolder> {
@@ -50,6 +53,27 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
         Board data = mBoardList.get(position);
         holder.mTitleTextView.setText(data.getTitle());
         holder.mNameTextView.setText(data.getName());
+        holder.mNameContentView.setText(data.getContents());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm");
+        holder.mCreateDate.setText(dateFormat.format(data.getCreatedate()));
+
+        switch (data.getType())
+        {
+            case "0":
+                //png파일은 아래 처럼
+                Drawable placeholder = null;
+                placeholder = holder.mImage.getContext().getResources().getDrawable(R.drawable.img_notice);
+                holder.mImage.setImageDrawable(placeholder);
+                break;
+            case "1":
+                //xml파일은 아래처럼
+                holder.mImage.setImageResource(R.drawable.img_image);
+                break;
+            default:
+                holder.mImage.setImageResource(R.drawable.img_image);
+                break;
+        }
+
     }
 
     @Override
@@ -65,12 +89,18 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
 
         public TextView mTitleTextView;
         public TextView mNameTextView;
+        public TextView mNameContentView;
+        public TextView mCreateDate;
+        public ImageView mImage;
 
         public BoardViewHolder(@NonNull View itemView) {
             super(itemView);
 
             mTitleTextView = itemView.findViewById(R.id.item_title_text);
             mNameTextView = itemView.findViewById(R.id.item_name_text);
+            mNameContentView = itemView.findViewById(R.id.item_contents_text);
+            mCreateDate = itemView.findViewById(R.id.item_date);
+            mImage = itemView.findViewById(R.id.item_image);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

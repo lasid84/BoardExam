@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,9 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     private Button mWriteBtnUpdate;
     private Spinner mWriteType;
 
-    private String id;
+    private String mId;
+
+    public String mTest = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,42 +66,53 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void setContents() {
-        Intent intent = getIntent(); //이전 액티비티에서 수신할 데이터를 받기위해 선언
-        String id= intent.getStringExtra(FirebaseID.documentId);
-        String title = intent.getStringExtra(FirebaseID.title);
-        String type = intent.getStringExtra(FirebaseID.type);
-        String contents= intent.getStringExtra(FirebaseID.contents);
-        String name= intent.getStringExtra(FirebaseID.name);
-        String email= intent.getStringExtra(FirebaseID.email);
+        try {
+            Intent intent = getIntent(); //이전 액티비티에서 수신할 데이터를 받기위해 선언
+            String id = intent.getStringExtra(FirebaseID.documentId);
+            mId = id;
+            String title = intent.getStringExtra(FirebaseID.title);
+            String type = NullCheck(intent.getStringExtra(FirebaseID.type));
+            String contents = intent.getStringExtra(FirebaseID.contents);
+            String name = intent.getStringExtra(FirebaseID.name);
+            String email = intent.getStringExtra(FirebaseID.email);
 
-        mWriteBtnUpload.setVisibility(View.VISIBLE);
-        mWriteBtnUpdate.setVisibility(View.INVISIBLE);
-        mWriteBtnDelete.setVisibility(View.INVISIBLE);
+            mWriteBtnUpload.setVisibility(View.VISIBLE);
+            mWriteBtnUpdate.setVisibility(View.INVISIBLE);
+            mWriteBtnDelete.setVisibility(View.INVISIBLE);
 
-        CommonCode cc = new CommonCode(FirebaseID.board, FirebaseID.admin);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(WriteActivity.this, R.layout.spinner_spinner1_normal, cc.typeArr);
+            CommonCode cc = new CommonCode(FirebaseID.board, FirebaseID.admin);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(WriteActivity.this, R.layout.spinner_spinner1_normal, cc.typeArr);
 
-        adapter.setDropDownViewResource(R.layout.spinner_spinner1_normal);
-        mWriteType.setAdapter(adapter);
+            adapter.setDropDownViewResource(R.layout.spinner_spinner1_normal);
+            mWriteType.setAdapter(adapter);
 
-        if (id != null) {
-            this.mWriteTitleText.setText(title);
-            this.mWriteContentsText.setText(contents);
-            this.mWriteNameText.setText(name);
-            mWriteType.setSelection(Integer.parseInt(type));
+            if (id != null) {
+                this.mWriteTitleText.setText(title);
+                this.mWriteContentsText.setText(contents);
+                this.mWriteNameText.setText(name);
+                if (type != " " && !type.equals("null"))
+                    mWriteType.setSelection(Integer.parseInt(type));
 
-            if (email.equals(FirebaseID.useremail)) {
-                mWriteBtnUpload.setVisibility(View.INVISIBLE);
-                mWriteBtnUpdate.setVisibility(View.VISIBLE);
-                mWriteBtnDelete.setVisibility(View.VISIBLE);
+                if (email.equals(FirebaseID.useremail)) {
+                    mWriteBtnUpload.setVisibility(View.INVISIBLE);
+                    mWriteBtnUpdate.setVisibility(View.VISIBLE);
+                    mWriteBtnDelete.setVisibility(View.VISIBLE);
+                } else {
+                    mWriteBtnUpload.setVisibility(View.INVISIBLE);
+                    mWriteBtnUpdate.setVisibility(View.INVISIBLE);
+                    mWriteBtnDelete.setVisibility(View.INVISIBLE);
+                }
             } else {
                 mWriteBtnUpload.setVisibility(View.VISIBLE);
                 mWriteBtnUpdate.setVisibility(View.INVISIBLE);
                 mWriteBtnDelete.setVisibility(View.INVISIBLE);
+                mWriteType.setSelection(0);
             }
         }
+        catch (Exception e) {
+            Toast.makeText(WriteActivity.this, "type : " + mTest + "//////////////////////"  + e.toString(), Toast.LENGTH_SHORT).show();
+        }
 
-        mWriteType.setSelection(0);
     }
 
     @Override
@@ -129,12 +143,18 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void WritePost() {
+        mId = mStore.collection(FirebaseID.board).document().getId();
 
-        id = mStore.collection(FirebaseID.board).document().getId();
+//        mId = mStore.collection(FirebaseID.board).document()
+
         Map<String, Object> post = new HashMap<>();
-        post.put(FirebaseID.documentId, id);
+        post.put(FirebaseID.documentId, "");
 
         post.put(FirebaseID.title, mWriteTitleText.getText().toString());
+
+        CommonCode cc = new CommonCode(FirebaseID.board, FirebaseID.admin);
+        Object typekey = getKeyFromValue(cc.typeMap, mWriteType.getSelectedItem().toString());
+        post.put(FirebaseID.type, typekey.toString());
         post.put(FirebaseID.contents, mWriteContentsText.getText().toString());
         post.put(FirebaseID.name, mWriteNameText.getText().toString());
         post.put(FirebaseID.email, FirebaseID.useremail);
@@ -157,11 +177,64 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void DeletePost() {
-
+        mStore.collection(FirebaseID.board).document(mId).update(FirebaseID.useflag, "N")
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(com.example.boardexam2.WriteActivity.this, "수정 성공!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(com.example.boardexam2.WriteActivity.this, "수젇 실패!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void UpdatePost() {
 
+        Map<String, Object> post = new HashMap<>();
+        post.put(FirebaseID.title, mWriteTitleText.getText().toString());
+
+        CommonCode cc = new CommonCode(FirebaseID.board, FirebaseID.admin);
+        Object key = getKeyFromValue(cc.typeMap, mWriteType.getSelectedItem().toString());
+        post.put(FirebaseID.type, key.toString());
+        post.put(FirebaseID.contents, mWriteContentsText.getText().toString());
+        post.put(FirebaseID.name, mWriteNameText.getText().toString());
+        post.put(FirebaseID.email, FirebaseID.useremail);
+//        FirebaseID.last_createdate = new Timestamp(new Date().getTime());
+        post.put(FirebaseID.createdate, FieldValue.serverTimestamp());
+
+        mStore.collection(FirebaseID.board).document(mId).update(post)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(com.example.boardexam2.WriteActivity.this, "수정 성공!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(com.example.boardexam2.WriteActivity.this, "수젇 실패!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private String NullCheck (String val) {
+        if (val == null || val.equals("null"))
+            return " ";
+        else
+            return val;
+    }
+
+    public static Object getKeyFromValue(Map hm, Object value) {
+        for (Object o : hm.keySet()) {
+            if (hm.get(o).equals(value)) {
+                return o;
+            }
+        }
+        return null;
     }
 
 }

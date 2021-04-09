@@ -16,6 +16,7 @@ public class FirebaseID {
     public static String name = "name";
     public static String createdate = "createdate";
     public static String updatedate = "updatedate";
+    public static String useflag = "useflag";
 
 
     //값 전달용
