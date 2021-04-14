@@ -148,7 +148,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 //        mId = mStore.collection(FirebaseID.board).document()
 
         Map<String, Object> post = new HashMap<>();
-        post.put(FirebaseID.documentId, "");
+        post.put(FirebaseID.documentId, mId);
 
         post.put(FirebaseID.title, mWriteTitleText.getText().toString());
 
@@ -160,8 +160,9 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         post.put(FirebaseID.email, FirebaseID.useremail);
 //        FirebaseID.last_createdate = new Timestamp(new Date().getTime());
         post.put(FirebaseID.createdate, FieldValue.serverTimestamp());
+        post.put(FirebaseID.useflag, "Y");
 
-        mStore.collection(FirebaseID.board).document().set(post)
+        mStore.collection(FirebaseID.board).document(mId).set(post)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

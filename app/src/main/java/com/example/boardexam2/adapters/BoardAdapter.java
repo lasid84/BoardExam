@@ -57,17 +57,22 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.BoardViewHol
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm");
         holder.mCreateDate.setText(dateFormat.format(data.getCreatedate()));
 
+        Drawable placeholder = null;
         switch (data.getType())
         {
             case "0":
                 //png파일은 아래 처럼
-                Drawable placeholder = null;
                 placeholder = holder.mImage.getContext().getResources().getDrawable(R.drawable.img_notice);
                 holder.mImage.setImageDrawable(placeholder);
                 break;
             case "1":
                 //xml파일은 아래처럼
                 holder.mImage.setImageResource(R.drawable.img_image);
+                break;
+            case "2":
+                //png파일은 아래 처럼
+                placeholder = holder.mImage.getContext().getResources().getDrawable(R.drawable.img_insam_super_cuty);
+                holder.mImage.setImageDrawable(placeholder);
                 break;
             default:
                 holder.mImage.setImageResource(R.drawable.img_image);

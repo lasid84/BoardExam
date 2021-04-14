@@ -16,8 +16,11 @@ public class CommonCode extends com.example.boardexam2.FirebaseID {
     public CommonCode(String menuType, String adminYN) {
         switch (menuType) {
             case FirebaseID.board :
-                if (adminYN == "Y")
+                if (adminYN == "Y") {
                     typeMap.put(0, "notice");
+                    typeMap.put(2, "insam");
+                }
+
 
                 typeMap.put(1, "question");
                 typeArr = new String[typeMap.size()];

@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".WriteActivity"
     android:orientation="vertical"
-    android:background="@color/white"
     >
 
     <LinearLayout
@@ -58,7 +57,6 @@
         android:layout_height="50dp"
         android:spinnerMode="dropdown"
         android:layout_margin="4dp"
-        android:dropDownVerticalOffset="16dp"
         />
 
     <EditText
